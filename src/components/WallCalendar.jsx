@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { jsPDF } from 'jspdf';
 import { toPng } from 'html-to-image';
 import { HeroSection } from './HeroSection';
@@ -26,10 +26,13 @@ export function WallCalendar() {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [imagePalette, setImagePalette] = useState(null);
+  const [moodPalette, setMoodPalette] = useState(null);
+  const [visualPreset, setVisualPreset] = useState('detailed');
   const [disablePastDates, setDisablePastDates] = useState(false);
   const [disableFutureDates, setDisableFutureDates] = useState(false);
   const [compactMode, setCompactMode] = useState(false);
   const calendarRef = useRef(null);
+  const moodResetRef = useRef(null);
 
   const handleJumpToToday = () => {
     const today = new Date();
@@ -40,6 +43,60 @@ export function WallCalendar() {
     setStartDate(null);
     setEndDate(null);
   };
+
+  const rotateVisualPreset = () => {
+    setVisualPreset((prev) => (prev === 'detailed' ? 'minimal' : 'detailed'));
+  };
+
+  const applyTemporaryMoodPalette = () => {
+    if (moodPalette) {
+      setMoodPalette(null);
+      if (moodResetRef.current) {
+        clearTimeout(moodResetRef.current);
+        moodResetRef.current = null;
+      }
+      return;
+    }
+
+    const moods = [
+      {
+        '--color-active-50': '#eceff6',
+        '--color-active-100': '#dbe3f0',
+        '--color-active-500': '#7a8fb0',
+        '--color-active-600': '#62789b',
+        '--color-active-700': '#4d607f'
+      },
+      {
+        '--color-active-50': '#f6efe8',
+        '--color-active-100': '#ead9ca',
+        '--color-active-500': '#b18a67',
+        '--color-active-600': '#997252',
+        '--color-active-700': '#7f5c40'
+      },
+      {
+        '--color-active-50': '#f3ecef',
+        '--color-active-100': '#e8d9df',
+        '--color-active-500': '#ac7f8f',
+        '--color-active-600': '#936777',
+        '--color-active-700': '#784f5f'
+      }
+    ];
+
+    const selected = moods[Math.floor(Math.random() * moods.length)];
+    setMoodPalette(selected);
+
+    if (moodResetRef.current) clearTimeout(moodResetRef.current);
+    moodResetRef.current = setTimeout(() => {
+      setMoodPalette(null);
+      moodResetRef.current = null;
+    }, 12000);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (moodResetRef.current) clearTimeout(moodResetRef.current);
+    };
+  }, []);
 
   const createCalendarPng = async (backgroundColor = '#f4f0ea') => {
     if (!calendarRef.current) return null;
@@ -117,7 +174,9 @@ export function WallCalendar() {
       <div 
         ref={calendarRef} 
         data-season={currentSeason}
-        style={imagePalette || undefined}
+        data-visual-preset={visualPreset}
+        data-mood-active={!!moodPalette}
+        style={{ ...(imagePalette || {}), ...(moodPalette || {}) }}
         className="calendar-sheet-wrapper w-full"
       >
         <div className="calendar-sheet w-full flex flex-col">
@@ -185,6 +244,10 @@ export function WallCalendar() {
         onClearSelection={handleClearSelection}
         onExportImage={handleExportImage}
         onExportPdf={handleExportPdf}
+        visualPreset={visualPreset}
+        onRotateVisualPreset={rotateVisualPreset}
+        onApplyMoodPalette={applyTemporaryMoodPalette}
+        moodActive={!!moodPalette}
       />
     </div>
   );

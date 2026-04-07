@@ -109,6 +109,67 @@ body {
   position: relative;
 }
 
+[data-visual-preset='minimal'] .spiral-wrap {
+  opacity: 0.72;
+}
+
+[data-visual-preset='minimal'] .sheet-panel {
+  box-shadow: 0 12px 22px rgba(45, 47, 53, 0.14);
+}
+
+[data-visual-preset='minimal'] .sheet-topbar {
+  background: #f6f3ef;
+}
+
+[data-visual-preset='minimal'] .notes-card {
+  box-shadow: 0 5px 10px rgba(55, 48, 41, 0.08);
+  background: #f8f3ea;
+}
+
+[data-visual-preset='minimal'] .note-item-featured {
+  box-shadow: 0 2px 5px rgba(124, 105, 67, 0.08);
+}
+
+[data-visual-preset='detailed'] .sheet-panel {
+  box-shadow: 0 22px 38px rgba(45, 47, 53, 0.2);
+}
+
+[data-visual-preset='detailed'] .notes-card {
+  box-shadow: 0 8px 16px rgba(55, 48, 41, 0.11);
+}
+
+[data-mood-active='true'] .sheet-panel {
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-active-500) 38%, #ffffff), 0 24px 36px color-mix(in srgb, var(--color-active-700) 22%, transparent);
+}
+
+[data-mood-active='true'] .sheet-topbar {
+  background: color-mix(in srgb, var(--color-active-50) 42%, #f5f1ec);
+}
+
+[data-mood-active='true'] .sheet-nav-btn,
+[data-mood-active='true'] .sheet-select,
+[data-mood-active='true'] .sheet-today-btn,
+[data-mood-active='true'] .sheet-clear-btn {
+  border-color: color-mix(in srgb, var(--color-active-500) 40%, #d6cec4);
+  background: color-mix(in srgb, var(--color-active-50) 56%, #f2eeea);
+  color: color-mix(in srgb, var(--color-active-700) 64%, #5f6672);
+}
+
+[data-mood-active='true'] .notes-card,
+[data-mood-active='true'] .feature-cluster,
+[data-mood-active='true'] .insight-strip,
+[data-mood-active='true'] .feature-group {
+  border-color: color-mix(in srgb, var(--color-active-500) 34%, #d9d1c6);
+  background: color-mix(in srgb, var(--color-active-50) 50%, #f7f2ec);
+}
+
+[data-mood-active='true'] .feature-primary-btn,
+[data-mood-active='true'] .action-pill,
+[data-mood-active='true'] .export-action {
+  background: color-mix(in srgb, var(--color-active-100) 64%, #f3eee8) !important;
+  color: color-mix(in srgb, var(--color-active-700) 70%, #3f4f64) !important;
+}
+
 .spiral-wrap {
   position: relative;
   height: 28px;

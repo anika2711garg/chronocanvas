@@ -42,7 +42,11 @@ export function ExperienceDock({
   onJumpToToday,
   onClearSelection,
   onExportImage,
-  onExportPdf
+  onExportPdf,
+  visualPreset,
+  onRotateVisualPreset,
+  onApplyMoodPalette,
+  moodActive
 }) {
   const [goToDate, setGoToDate] = useState(format(currentDate, 'yyyy-MM-dd'));
   const [noteText, setNoteText] = useState('');
@@ -192,6 +196,8 @@ export function ExperienceDock({
     setCurrentDate(next);
     setStartDate(null);
     setEndDate(null);
+    if (onRotateVisualPreset) onRotateVisualPreset();
+    if (onApplyMoodPalette) onApplyMoodPalette();
   };
 
   return (
@@ -212,6 +218,11 @@ export function ExperienceDock({
 
           <div className="action-pill-row action-pill-row-single">
             <button onClick={applyInspirationMode} className="action-pill">Inspiration Mode</button>
+          </div>
+
+          <div className="action-pill-row">
+            <button onClick={onRotateVisualPreset} className="action-pill">Preset: {visualPreset}</button>
+            <button onClick={onApplyMoodPalette} className="action-pill">{moodActive ? 'Mood On' : 'Mood Tint'}</button>
           </div>
 
           <div className="feature-toggles">
