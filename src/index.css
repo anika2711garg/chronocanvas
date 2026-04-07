@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 /* 
   Custom themes map to months.
@@ -94,6 +95,230 @@ body {
     linear-gradient(165deg, #11171b 0%, #161d22 48%, #131a1f 100%);
 }
 
+.wall-backdrop {
+  background:
+    radial-gradient(1200px 480px at 50% -22%, rgba(255, 255, 255, 0.85), transparent 58%),
+    linear-gradient(180deg, #ebe8e3 0%, #dfddd8 100%);
+}
+
+.calendar-sheet {
+  max-width: 748px;
+}
+
+.spiral-wrap {
+  position: relative;
+  height: 28px;
+  margin: 0 12px;
+}
+
+.spiral-hook {
+  position: absolute;
+  left: 50%;
+  top: -6px;
+  transform: translateX(-50%);
+  width: 34px;
+  height: 21px;
+  border: 2px solid #98999d;
+  border-bottom: 0;
+  border-radius: 22px 22px 0 0;
+}
+
+.spiral-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 13px;
+  height: 1px;
+  background: #9fa1a5;
+  opacity: 0.9;
+}
+
+.spiral-rings {
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  top: 10px;
+  height: 9px;
+  background: repeating-radial-gradient(circle at 6px 4.5px, #6e7177 0 1.6px, #bcc0c6 1.6px 3.7px, transparent 3.7px 14px);
+  background-size: 17px 9px;
+  background-repeat: repeat-x;
+}
+
+.sheet-panel {
+  box-shadow: 0 22px 38px rgba(45, 47, 53, 0.2);
+}
+
+.sheet-topbar {
+  height: 38px;
+}
+
+.sheet-brand {
+  font-family: 'Cormorant Garamond', 'Times New Roman', serif;
+  font-size: 1.65rem;
+  line-height: 1;
+  color: #4d515b;
+  letter-spacing: -0.01em;
+}
+
+.sheet-icon-btn {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  border: 1px solid #d9d4cd;
+  background: #f4f1ed;
+  color: #80858f;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sheet-nav-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  border: 1px solid #ddd9d2;
+  background: #f2efea;
+  color: #717580;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sheet-select {
+  border: 1px solid #d9d3ca;
+  background: #f2eeea;
+  color: #5d6168;
+  height: 26px;
+  border-radius: 8px;
+  padding: 0 26px 0 10px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.sheet-today-btn {
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd9d2;
+  background: #f2efea;
+  color: #7c8087;
+  font-size: 11px;
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.sheet-day-cell {
+  min-height: 29px;
+  border-radius: 4px;
+}
+
+.sheet-clear-btn {
+  height: 24px;
+  padding: 0 11px;
+  border-radius: 999px;
+  border: 1px solid #d5d0c7;
+  background: #f1ede8;
+  color: #7b7f86;
+  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.month-script {
+  font-family: 'Allura', 'Caveat', cursive;
+}
+
+.notes-card {
+  background: #f7efe4;
+  border: 1px solid #dfd4c7;
+  border-radius: 8px;
+  box-shadow: 0 8px 16px rgba(55, 48, 41, 0.11);
+  padding: 10px;
+}
+
+.notes-title-wrap {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.notes-title {
+  display: inline-block;
+  color: #4d4d52;
+  font-size: 2.1rem;
+  line-height: 1;
+}
+
+.notes-list {
+  max-height: 226px;
+  overflow: auto;
+  padding-right: 2px;
+}
+
+.notes-empty {
+  font-size: 12px;
+  color: #8e8e95;
+  padding: 8px 2px 12px;
+}
+
+.note-item {
+  border-top: 1px solid #e6ddd1;
+  padding: 7px 4px;
+}
+
+.note-item-featured {
+  background: #fff2d3;
+  border-radius: 6px;
+  border: 1px solid #ead9ae;
+  margin-bottom: 8px;
+  box-shadow: 0 3px 7px rgba(124, 105, 67, 0.13);
+}
+
+.note-item-date {
+  font-size: 10px;
+  color: #6f7580;
+  margin: 0;
+}
+
+.note-item-text {
+  font-size: 12px;
+  color: #4b4f57;
+  margin: 2px 0 0;
+  font-style: italic;
+}
+
+.notes-input-row {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.notes-input {
+  height: 28px;
+  border-radius: 10px;
+  border: 1px solid #e1d9ce;
+  background: #f8f4ee;
+  padding: 0 10px;
+  color: #555a63;
+  font-size: 11px;
+}
+
+.notes-add-btn {
+  height: 28px;
+  border-radius: 10px;
+  border: 1px solid #ddd3c5;
+  background: #f2ede6;
+  color: #5d626b;
+  font-size: 11px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
 .calendar-shell {
   transform: rotate(-0.35deg);
 }
@@ -114,6 +339,32 @@ body {
 .calendar-page-frame {
   perspective: 1200px;
   transform-style: preserve-3d;
+}
+
+.flip-paper-sweep {
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    rgba(68, 84, 94, 0.02) 36%,
+    rgba(68, 84, 94, 0.12) 48%,
+    rgba(68, 84, 94, 0.02) 62%,
+    transparent 100%
+  );
+}
+
+.dark .flip-paper-sweep {
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    rgba(0, 0, 0, 0.02) 36%,
+    rgba(0, 0, 0, 0.2) 48%,
+    rgba(0, 0, 0, 0.02) 62%,
+    transparent 100%
+  );
+}
+
+.holiday-tooltip-card {
+  backdrop-filter: blur(8px);
 }
 
 .holiday-pin {

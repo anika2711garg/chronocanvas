@@ -3,9 +3,9 @@ import {
   startOfMonth, endOfMonth, startOfWeek, endOfWeek, 
   eachDayOfInterval, format, isSameMonth, isSameDay, 
   isToday, isAfter, isBefore, addMonths, subMonths,
-  setYear, isWeekend
+  setYear
 } from 'date-fns';
-import { ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ChevronDown, Home, XCircle } from 'lucide-react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -17,13 +17,17 @@ function cn(...inputs) {
 export function CalendarGrid({ 
   currentDate, setCurrentDate, 
   startDate, setStartDate, 
-  endDate, setEndDate 
+  endDate, setEndDate,
+  onJumpToToday,
+  onClearSelection,
+  hasSelection
 }) {
   const [hoverDate, setHoverDate] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
   const [dots, setDots] = useState({});
   const [customHolidays, setCustomHolidays] = useState([]);
   const [navDirection, setNavDirection] = useState(1);
+  const [hoveredHolidayIso, setHoveredHolidayIso] = useState(null);
 
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(monthStart);
@@ -40,9 +44,13 @@ export function CalendarGrid({
     '02-14': 'Valentine\'s Day',
     '03-08': 'Women\'s Day',
     '04-22': 'Earth Day',
+    '05-01': 'Labour Day',
     '06-21': 'Summer Solstice',
+    '07-07': 'Monsoon Festival',
     '08-15': 'Independence Day',
+    '09-21': 'Peace Day',
     '10-31': 'Halloween',
+    '11-14': 'Kindness Day',
     '12-25': 'Christmas Day'
   };
 
@@ -182,68 +190,66 @@ export function CalendarGrid({
   const flipVariants = {
     enter: (direction) => ({
       opacity: 0,
-      rotateX: direction > 0 ? -14 : 14,
-      y: direction > 0 ? 10 : -10,
-      filter: 'blur(1px)'
+      rotateX: direction > 0 ? -26 : 26,
+      rotateY: direction > 0 ? 6 : -6,
+      scale: 0.96,
+      y: direction > 0 ? 18 : -18,
+      transformOrigin: direction > 0 ? '50% 0%' : '50% 100%',
+      filter: 'blur(1.2px)'
     }),
     center: {
       opacity: 1,
       rotateX: 0,
+      rotateY: 0,
+      scale: 1,
       y: 0,
+      transformOrigin: '50% 50%',
       filter: 'blur(0px)'
     },
     exit: (direction) => ({
       opacity: 0,
-      rotateX: direction > 0 ? 12 : -12,
-      y: direction > 0 ? -8 : 8,
+      rotateX: direction > 0 ? 22 : -22,
+      rotateY: direction > 0 ? -4 : 4,
+      scale: 0.98,
+      y: direction > 0 ? -14 : 14,
+      transformOrigin: direction > 0 ? '50% 100%' : '50% 0%',
       filter: 'blur(0.8px)'
     })
   };
 
   return (
     <div 
-      className="w-full bg-[#fbf9f4]/95 dark:bg-slate-800/90 p-4 sm:p-6 md:p-7 rounded-b-[1.8rem] lg:rounded-bl-[1.8rem] lg:rounded-br-none h-full flex flex-col transition-colors border-t border-[#e8e0d1]/80 dark:border-slate-700/60"
+      className="w-full bg-transparent p-0 h-full flex flex-col"
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
     >
-      <div className="flex justify-between items-center mb-5 sm:mb-6">
-        <div className="flex items-center gap-2.5 sm:gap-3">
-          <h2 className="month-mark text-2xl sm:text-[2rem] font-semibold text-[color:var(--ink-900)] dark:text-slate-100">
-            {format(currentDate, 'MMMM')}
-          </h2>
-          <div className="relative">
-            <select 
-              value={currentDate.getFullYear()} 
-              onChange={handleYearChange}
-              className="appearance-none bg-[#ede6d9] dark:bg-slate-700/80 text-[color:var(--ink-900)] dark:text-slate-100 py-1.5 pl-3 pr-8 rounded-xl font-semibold text-base sm:text-lg cursor-pointer outline-none focus:ring-2 focus:ring-[color:var(--color-active-500)] transition-colors"
-            >
-              {years.map(y => <option key={y} value={y}>{y}</option>)}
-            </select>
-            <ChevronDown className="w-4 h-4 text-[color:var(--ink-700)]/80 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
-          </div>
-        </div>
-        <div className="flex gap-2.5">
-          <button 
-            onClick={handlePrevMonth}
-            className="p-2.5 hover:bg-[#ebe5d8] dark:hover:bg-slate-700 rounded-full transition-colors group"
-            aria-label="Previous Month"
+      <div className="flex items-center gap-2 mb-3 text-[#5c5f66] dark:text-slate-200">
+        <button onClick={handlePrevMonth} className="sheet-nav-btn" aria-label="Previous month">
+          <ChevronLeft className="w-4 h-4" />
+        </button>
+        <div className="relative">
+          <select
+            value={currentDate.getFullYear()}
+            onChange={handleYearChange}
+            className="sheet-select appearance-none"
           >
-            <ChevronLeft className="w-5 h-5 text-[color:var(--ink-700)] dark:text-slate-300 group-hover:text-[color:var(--color-active-600)]" />
-          </button>
-          <button 
-            onClick={handleNextMonth}
-            className="p-2.5 hover:bg-[#ebe5d8] dark:hover:bg-slate-700 rounded-full transition-colors group"
-            aria-label="Next Month"
-          >
-            <ChevronRight className="w-5 h-5 text-[color:var(--ink-700)] dark:text-slate-300 group-hover:text-[color:var(--color-active-600)]" />
-          </button>
+            {years.map(y => <option key={y} value={y}>{format(currentDate, 'MMMM')} {y}</option>)}
+          </select>
+          <ChevronDown className="w-3.5 h-3.5 text-[#7a7f88] absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
         </div>
+        <button onClick={handleNextMonth} className="sheet-nav-btn" aria-label="Next month">
+          <ChevronRight className="w-4 h-4" />
+        </button>
+        <button onClick={() => onJumpToToday && onJumpToToday()} className="sheet-today-btn ml-auto">
+          <Home className="w-3.5 h-3.5" />
+          Today
+        </button>
       </div>
 
-      <div className="grid grid-cols-7 gap-[0.45rem] sm:gap-[0.56rem] mb-2.5">
+      <div className="grid grid-cols-7 gap-1 mb-1.5">
         {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-          <div key={day} className="text-center text-[11px] sm:text-xs font-semibold text-[color:var(--ink-700)]/60 dark:text-slate-400 py-1.5 uppercase tracking-[0.16em]">
-            {day}
+          <div key={day} className="text-center text-[10px] sm:text-[11px] font-semibold text-[#70747d] dark:text-slate-400 py-1 uppercase tracking-[0.2em]">
+            {day.slice(0, 1)}
           </div>
         ))}
       </div>
@@ -252,13 +258,20 @@ export function CalendarGrid({
         <motion.div
           custom={navDirection}
           key={monthKey}
-          className="calendar-page-frame calendar-grid-organic grid grid-cols-7 flex-grow auto-rows-fr"
+          className="calendar-page-frame relative overflow-hidden grid grid-cols-7 gap-1 flex-grow auto-rows-fr"
           variants={flipVariants}
           initial="enter"
           animate="center"
           exit="exit"
-          transition={{ duration: 0.34, ease: [0.22, 0.62, 0.2, 1] }}
+          transition={{ duration: 0.42, ease: [0.22, 0.62, 0.2, 1] }}
         >
+          <motion.div
+            className="flip-paper-sweep pointer-events-none absolute inset-y-0 -left-[40%] w-[45%] z-[1]"
+            initial={{ x: '-100%', opacity: 0 }}
+            animate={{ x: '360%', opacity: [0, 1, 0] }}
+            transition={{ duration: 0.58, ease: [0.2, 0.7, 0.2, 1] }}
+          />
+
           {days.map((day) => {
             const isSelectedStart = startDate && isSameDay(day, startDate);
             const isSelectedEnd = endDate && isSameDay(day, endDate);
@@ -266,10 +279,11 @@ export function CalendarGrid({
             const middleRange = isRangeMiddle(day);
             const shadowHovered = isHoverRange(day);
             const isCurrentMonth = isSameMonth(day, monthStart);
-            const weekend = isWeekend(day);
             const hasNotes = hasNoteInSelection(day);
             const holidayLabel = isCurrentMonth ? getHolidayLabel(day) : null;
             const hasHoliday = !!holidayLabel;
+            const holidayIso = format(day, 'yyyy-MM-dd');
+            const showHolidayTooltip = hasHoliday && hoveredHolidayIso === holidayIso;
 
             return (
               <motion.button
@@ -283,37 +297,49 @@ export function CalendarGrid({
                   transition: { type: 'spring', stiffness: 420, damping: 18, mass: 0.22 }
                 }}
                 className={cn(
-                  'day-cell relative flex items-center justify-center text-sm sm:text-base font-semibold transition-all duration-200 border border-transparent outline-none overflow-hidden select-none',
-                  !isCurrentMonth && 'text-slate-300/80 dark:text-slate-700 pointer-events-none',
-                  isCurrentMonth && 'text-[color:var(--ink-900)] dark:text-slate-200 hover:scale-[1.03] hover:shadow-[0_8px_18px_rgba(34,52,62,0.12)]',
-                  isCurrentMonth && weekend && !highlighted && !shadowHovered && 'text-[color:var(--color-active-700)]/85',
-                  hasHoliday && !highlighted && !shadowHovered && 'bg-[color:var(--color-active-50)]/45 rounded-2xl',
-                  shadowHovered && !highlighted && 'bg-[color:var(--color-active-50)]/80 dark:bg-[color:var(--color-active-500)]/15 text-[color:var(--color-active-700)] rounded-2xl',
-                  middleRange && 'ink-reveal bg-gradient-to-r from-[color:var(--color-active-100)] to-[color:var(--color-active-50)] dark:from-[color:var(--color-active-600)]/35 dark:to-[color:var(--color-active-500)]/20 rounded-none',
-                  isSelectedStart && 'bg-[color:var(--color-active-600)] text-white rounded-full shadow-[0_10px_24px_color-mix(in_srgb,var(--color-active-700)_38%,transparent)]',
-                  isSelectedEnd && 'bg-[color:var(--color-active-600)] text-white rounded-full shadow-[0_10px_24px_color-mix(in_srgb,var(--color-active-700)_38%,transparent)]',
-                  highlighted && !middleRange && !isSelectedStart && !isSelectedEnd && 'bg-[color:var(--color-active-100)]/80 dark:bg-[color:var(--color-active-600)]/25 text-[color:var(--color-active-700)] rounded-2xl',
-                  highlighted && isSelectedStart && !isSelectedEnd && endDate && 'rounded-r-2xl',
-                  highlighted && isSelectedEnd && !isSelectedStart && startDate && 'rounded-l-2xl'
+                  'sheet-day-cell relative flex items-center justify-center text-sm sm:text-[15px] font-medium transition-all duration-200 outline-none overflow-hidden select-none',
+                  !isCurrentMonth && 'text-[#bcc0c7] dark:text-slate-600',
+                  isCurrentMonth && 'text-[#474d57] dark:text-slate-200 hover:bg-[#edf0f3] dark:hover:bg-slate-700/35',
+                  hasHoliday && !highlighted && !shadowHovered && 'bg-[#f0efea] dark:bg-slate-700/25',
+                  shadowHovered && !highlighted && 'bg-[#e9edf2] dark:bg-slate-700/45 text-[#2f4358] dark:text-slate-100',
+                  middleRange && 'ink-reveal bg-gradient-to-r from-[#dce7f5] to-[#cbd9eb] dark:from-[color:var(--color-active-600)]/35 dark:to-[color:var(--color-active-500)]/20 rounded-[4px]',
+                  isSelectedStart && 'bg-[#9eb5d2] text-[#273246] rounded-[4px]',
+                  isSelectedEnd && 'bg-[#9eb5d2] text-[#273246] rounded-[4px]',
+                  highlighted && !middleRange && !isSelectedStart && !isSelectedEnd && 'bg-[#d6e2f2] text-[#31455b] rounded-[4px]'
                 )}
               >
                 {isToday(day) && !isSelectedStart && !isSelectedEnd && !highlighted && (
-                  <div className="absolute top-1 left-1/2 -translate-x-1/2 w-8 h-[3px] rounded-full bg-[color:var(--color-active-500)] opacity-35" />
+                  <div className="absolute top-1 left-1/2 -translate-x-1/2 w-7 h-[2px] rounded-full bg-[#8ea0b8] opacity-55" />
                 )}
 
                 {hasHoliday && (
                   <div
                     className="holiday-pin absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-[color:var(--color-active-600)]"
-                    title={holidayLabel}
                     aria-label={holidayLabel}
+                    onMouseEnter={() => setHoveredHolidayIso(holidayIso)}
+                    onMouseLeave={() => setHoveredHolidayIso(null)}
                   />
                 )}
+
+                {showHolidayTooltip && (
+                  <motion.div
+                    className="holiday-tooltip-card absolute z-20 -top-10 left-1/2 -translate-x-1/2 px-2.5 py-1.5 rounded-xl border border-white/65 dark:border-slate-700/70 bg-white/85 dark:bg-slate-800/88 shadow-[0_10px_24px_rgba(24,36,44,0.22)] whitespace-nowrap"
+                    initial={{ opacity: 0, y: 6, scale: 0.96 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 6, scale: 0.96 }}
+                    transition={{ duration: 0.16 }}
+                  >
+                    <div className="text-[10px] uppercase tracking-[0.14em] text-[color:var(--ink-700)]/70 dark:text-slate-300/70">Holiday</div>
+                    <div className="text-[11px] font-semibold text-[color:var(--ink-900)] dark:text-slate-100">{holidayLabel}</div>
+                  </motion.div>
+                )}
+
                 {format(day, 'd')}
 
                 {hasNotes && (
                   <div className={cn(
-                    'absolute bottom-1.5 w-1.5 h-1.5 rounded-full transition-colors',
-                    (isSelectedStart || isSelectedEnd) ? 'bg-white' : 'bg-[color:var(--color-active-600)]'
+                    'absolute bottom-1.5 w-1 h-1 rounded-full transition-colors',
+                    (isSelectedStart || isSelectedEnd) ? 'bg-[#1e2f43]' : 'bg-[#7d8fa4]'
                   )} />
                 )}
               </motion.button>
@@ -321,6 +347,17 @@ export function CalendarGrid({
           })}
         </motion.div>
       </AnimatePresence>
+
+      <div className="pt-2.5">
+        <button
+          onClick={() => onClearSelection && onClearSelection()}
+          disabled={!hasSelection}
+          className="sheet-clear-btn"
+        >
+          <XCircle className="w-3.5 h-3.5" />
+          Clear Selection
+        </button>
+      </div>
     </div>
   );
 }

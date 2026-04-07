@@ -1,11 +1,28 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useContext } from 'react';
 import html2canvas from 'html2canvas';
 import { HeroSection } from './HeroSection';
 import { CalendarGrid } from './CalendarGrid';
 import { NotesPanel } from './NotesPanel';
-import { Header } from './Header';
+import { Camera, Moon, Search, Sun } from 'lucide-react';
+import { ThemeContext } from '../App';
+
+const MONTH_IMAGES = {
+  0: '/winter.png',
+  1: '/winter.png',
+  2: '/spring.png',
+  3: '/spring.png',
+  4: '/spring.png',
+  5: '/summer.png',
+  6: '/summer.png',
+  7: '/summer.png',
+  8: '/autumn.png',
+  9: '/autumn.png',
+  10: '/autumn.png',
+  11: '/winter.png'
+};
 
 export function WallCalendar() {
+  const { isDarkMode, toggleDarkMode } = useContext(ThemeContext);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -52,54 +69,62 @@ export function WallCalendar() {
 
   return (
     <div className="w-full mx-auto flex flex-col items-center">
-      
-      <div className="w-full px-2 sm:px-4">
-        <Header 
-          onJumpToToday={handleJumpToToday}
-          onClearSelection={handleClearSelection}
-          onExportImage={handleExportImage}
-          hasSelection={!!startDate}
-        />
-      </div>
-
       <div 
         ref={calendarRef} 
         data-season={currentSeason}
         style={imagePalette || undefined}
-        className="calendar-shell w-full flex flex-col p-1 sm:p-2 lg:p-0"
+        className="calendar-sheet w-full flex flex-col"
       >
-        {/* Wall Hanger element */}
-        <div className="flex justify-center mb-3 sm:mb-4 select-none drop-shadow-md">
-          <div className="w-34 h-4 sm:h-6 bg-[#bbb2a2] dark:bg-[#4a4340] rounded-full flex justify-between items-center px-4 relative before:content-[''] before:absolute before:w-1.5 before:h-1.5 before:bg-[#6b6256] dark:before:bg-[#1f1b19] before:rounded-full before:left-3 after:content-[''] after:absolute after:w-1.5 after:h-1.5 after:bg-[#6b6256] dark:after:bg-[#1f1b19] after:rounded-full after:right-3 transition-colors">
-              <div className="w-16 h-8 border-2 border-[#c4bbab] dark:border-[#4f4743] border-b-0 rounded-t-xl absolute -top-[1.125rem] sm:-top-7 left-[48%] -translate-x-1/2 transition-colors"></div>
-          </div>
+        <div className="spiral-wrap">
+          <div className="spiral-hook" />
+          <div className="spiral-line" />
+          <div className="spiral-rings" />
         </div>
-        
-        <div className="flex flex-col lg:flex-row bg-white/85 dark:bg-slate-800/85 rounded-[1.8rem] shadow-[0_24px_50px_rgba(27,40,48,0.18)] dark:shadow-[0_24px_50px_rgba(0,0,0,0.5)] min-h-[700px] border border-white/70 dark:border-slate-700/70 overflow-hidden paper-texture backdrop-blur-sm transition-colors">
-          
-          {/* Left Column: Image and Calendar Grid */}
-          <div className="flex-1 flex flex-col min-w-0 bg-white/70 dark:bg-slate-800/80 transition-colors">
+
+        <div className="sheet-panel overflow-hidden rounded-b-[8px] rounded-t-[3px] border border-[#cfc7be] dark:border-slate-700 bg-[#f6f2ee] dark:bg-slate-800">
+          <div className="sheet-topbar px-4 sm:px-6 h-11 flex items-center justify-between border-b border-[#dfd7cd] dark:border-slate-700/80 bg-[#f5f1ec] dark:bg-slate-800/95">
+            <div className="sheet-brand dark:text-slate-100">ChronoCanvas</div>
+            <div className="flex items-center gap-1.5">
+              <button onClick={toggleDarkMode} className="sheet-icon-btn" aria-label="Toggle theme">
+                {isDarkMode ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
+              </button>
+              <button onClick={handleExportImage} className="sheet-icon-btn" aria-label="Export image">
+                <Camera className="w-3.5 h-3.5" />
+              </button>
+              <button className="sheet-icon-btn" aria-label="Search">
+                <Search className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+
+          <div className="flex flex-col bg-[#f7f3ee] dark:bg-slate-800">
             <HeroSection 
               currentDate={currentDate} 
               onPaletteExtract={setImagePalette}
             />
-            <CalendarGrid 
-              currentDate={currentDate}
-              setCurrentDate={setCurrentDate}
-              startDate={startDate}
-              setStartDate={setStartDate}
-              endDate={endDate}
-              setEndDate={setEndDate}
-            />
+
+            <div className="grid lg:grid-cols-[1fr_230px] gap-0 px-4 sm:px-5 py-3.5 sm:py-4.5">
+              <CalendarGrid 
+                currentDate={currentDate}
+                setCurrentDate={setCurrentDate}
+                startDate={startDate}
+                setStartDate={setStartDate}
+                endDate={endDate}
+                setEndDate={setEndDate}
+                onJumpToToday={handleJumpToToday}
+                onClearSelection={handleClearSelection}
+                hasSelection={!!startDate}
+              />
+
+              <NotesPanel 
+                currentDate={currentDate}
+                startDate={startDate}
+                endDate={endDate}
+              />
+            </div>
           </div>
 
-          {/* Right Column: Notes Block */}
-          <NotesPanel 
-            currentDate={currentDate}
-            startDate={startDate}
-            endDate={endDate}
-          />
-          
+          <div className="h-24 sm:h-28 border-t border-[#d8d0c7] dark:border-slate-700/60 bg-cover bg-center" style={{ backgroundImage: `url(${MONTH_IMAGES[currentDate.getMonth()]})` }} />
         </div>
       </div>
     </div>

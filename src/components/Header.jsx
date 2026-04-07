@@ -1,20 +1,30 @@
 import React, { useContext } from 'react';
 import { Moon, Sun, Camera, Home, XCircle } from 'lucide-react';
 import { ThemeContext } from '../App';
+import { format } from 'date-fns';
 
-export function Header({ onJumpToToday, onClearSelection, onExportImage, hasSelection }) {
+export function Header({ onJumpToToday, onClearSelection, onExportImage, hasSelection, currentDate }) {
   const { isDarkMode, toggleDarkMode } = useContext(ThemeContext);
+  const today = new Date();
 
   return (
     <div className="w-full flex flex-col sm:flex-row sm:items-end justify-between mb-5 sm:mb-7 gap-4 sm:gap-5 px-1">
       <div className="text-center sm:text-left">
-        <p className="text-[11px] tracking-[0.22em] uppercase text-[color:var(--ink-700)]/75 dark:text-slate-300/75 mb-1.5">
+        <p className="text-[11px] tracking-[0.22em] uppercase text-slate-500 dark:text-slate-300/80 mb-1.5">
           Handcrafted planner
         </p>
-        <h1 className="month-mark text-4xl sm:text-5xl font-semibold text-[color:var(--ink-900)] dark:text-slate-50 tracking-tight leading-none transition-colors">
+        <h1 className="month-mark text-4xl sm:text-5xl font-semibold text-slate-800 dark:text-slate-50 tracking-tight leading-none transition-colors">
           ChronoCanvas
         </h1>
-        <p className="text-[color:var(--ink-700)]/80 dark:text-slate-300/80 mt-2 font-medium transition-colors">Calendar and notes with a paper-like touch</p>
+        <p className="text-slate-600 dark:text-slate-300/85 mt-2 font-medium transition-colors">Calendar and notes with a paper-like touch</p>
+        <div className="mt-3 flex flex-wrap justify-center sm:justify-start gap-2">
+          <span className="px-2.5 py-1 rounded-full text-[11px] tracking-[0.05em] uppercase font-semibold bg-slate-200 text-slate-700 dark:bg-[color:var(--color-active-600)]/30 dark:text-slate-100">
+            Today: {format(today, 'EEE, MMM d, yyyy')}
+          </span>
+          <span className="px-2.5 py-1 rounded-full text-[11px] tracking-[0.05em] uppercase font-semibold bg-slate-600 text-slate-100 dark:bg-slate-800/75 dark:text-slate-200 border border-slate-500/30 dark:border-slate-700/70">
+            Viewing: {format(currentDate, 'MMMM yyyy')}
+          </span>
+        </div>
       </div>
       
       <div className="flex flex-wrap items-center justify-center sm:justify-end gap-2.5">

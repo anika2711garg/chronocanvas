@@ -24,14 +24,12 @@ function App() {
 
   return (
     <ThemeContext.Provider value={{ isDarkMode, toggleDarkMode, activeThemeColor, setActiveThemeColor }}>
-      <div className="atmosphere min-h-screen flex items-start justify-center p-3 sm:p-6 lg:p-10 selection:bg-[color:var(--color-active-100)] selection:text-[color:var(--ink-900)] transition-colors duration-300">
+      <div className="wall-backdrop min-h-screen flex items-center justify-center p-4 sm:p-8 selection:bg-[color:var(--color-active-100)] selection:text-[color:var(--ink-900)] transition-colors duration-300">
         <div className="pointer-events-none fixed inset-0 overflow-hidden">
-          <div className="absolute -left-24 top-28 h-56 w-56 rounded-full bg-[color:var(--color-active-100)]/50 blur-3xl" />
-          <div className="absolute right-6 top-12 h-72 w-72 rounded-full bg-[#d8cdb9]/35 blur-3xl" />
-          <div className="absolute bottom-10 left-1/3 h-44 w-44 rounded-full bg-[#a4b5b9]/25 blur-3xl" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_15%,rgba(255,255,255,0.52),transparent_35%),radial-gradient(circle_at_90%_30%,rgba(136,153,172,0.12),transparent_38%)]" />
         </div>
 
-        <div className="relative z-10 w-full max-w-[1180px]">
+        <div className="relative z-10 w-full max-w-[860px]">
           <WallCalendar />
         </div>
       </div>

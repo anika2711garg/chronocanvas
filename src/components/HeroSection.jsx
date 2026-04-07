@@ -102,7 +102,7 @@ export function HeroSection({ currentDate, onPaletteExtract }) {
 
   return (
     <div
-      className="group relative w-full h-[270px] sm:h-[330px] md:h-[410px] overflow-hidden rounded-t-[1.8rem] lg:rounded-tl-[1.8rem] lg:rounded-tr-none bg-[#d8d1c4]"
+      className="group relative w-full h-[200px] sm:h-[240px] overflow-hidden bg-[#d8d1c4]"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
@@ -121,23 +121,13 @@ export function HeroSection({ currentDate, onPaletteExtract }) {
         />
       </AnimatePresence>
 
-      <div className="absolute inset-0 bg-gradient-to-t from-black/58 via-black/18 to-black/8" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#2f3f58]/42 via-[#3c4f70]/10 to-transparent" />
       <motion.div className="absolute inset-0 bg-gradient-to-br from-white/18 via-transparent to-transparent mix-blend-screen" style={{ x: overlayX, y: overlayY }} />
       <motion.div className="absolute -left-10 bottom-14 h-40 w-44 rounded-full bg-[color:var(--color-active-100)]/30 blur-3xl" style={{ x: panelX, y: panelY }} />
 
-      <motion.div
-        className="absolute left-5 right-auto top-5 sm:left-8 sm:top-7 px-4 py-2.5 rounded-2xl border border-white/35 bg-white/18 text-white/85 text-xs sm:text-sm backdrop-blur-md"
-        style={{ x: overlayX, y: overlayY }}
-        initial={{ opacity: 0, y: -8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.15 }}
-      >
-        Printed moodboard edition
-      </motion.div>
-
-      <motion.div className="absolute bottom-5 left-5 sm:bottom-7 sm:left-8 text-white drop-shadow-md" style={{ x: overlayX, y: panelY }}>
+      <motion.div className="absolute bottom-11 left-8 sm:bottom-12 sm:left-10 text-white drop-shadow-md" style={{ x: overlayX, y: panelY }}>
         <motion.h1 
-          className="month-mark text-5xl sm:text-6xl font-semibold tracking-tight leading-[0.9]"
+          className="month-script text-4xl sm:text-5xl font-normal tracking-tight leading-[0.9]"
           key={`month-${monthIndex}`}
           initial={{ y: 10, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -146,7 +136,7 @@ export function HeroSection({ currentDate, onPaletteExtract }) {
           {format(currentDate, 'MMMM')}
         </motion.h1>
         <motion.p 
-          className="text-lg sm:text-2xl font-medium text-white/82 mt-1"
+          className="text-sm sm:text-base tracking-[0.24em] uppercase font-medium text-white/82 mt-0.5 ml-2"
           key={`year-${currentDate.getFullYear()}`}
           initial={{ y: 10, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -154,16 +144,6 @@ export function HeroSection({ currentDate, onPaletteExtract }) {
         >
           {format(currentDate, 'yyyy')}
         </motion.p>
-      </motion.div>
-
-      <motion.div
-        className="absolute bottom-6 right-5 sm:right-8 h-20 w-24 sm:h-24 sm:w-28 rounded-[1.2rem] border border-white/35 bg-white/20 backdrop-blur-md shadow-[0_10px_25px_rgba(0,0,0,0.2)] rotate-[3deg] flex items-center justify-center text-white/90"
-        style={{ x: panelX, y: overlayY }}
-      >
-        <div className="text-center">
-          <div className="text-[11px] uppercase tracking-[0.16em] opacity-80">Daylight</div>
-          <div className="month-mark text-2xl sm:text-3xl leading-none">{format(currentDate, 'd')}</div>
-        </div>
       </motion.div>
     </div>
   );
