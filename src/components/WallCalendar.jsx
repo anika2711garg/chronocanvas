@@ -181,9 +181,11 @@ export function WallCalendar() {
         className="calendar-sheet-wrapper w-full"
       >
         <div className="calendar-sheet w-full flex flex-col">
-        <CalendarHeader />
+        <div className="relative">
+          <div className="pointer-events-none absolute inset-x-5 top-8 h-[92%] rounded-[26px] bg-[radial-gradient(ellipse_at_center,rgba(95,83,67,0.2)_0%,rgba(95,83,67,0.09)_45%,rgba(95,83,67,0)_76%)] blur-xl" />
+          <CalendarHeader />
 
-        <div className="sheet-panel overflow-hidden rounded-b-[8px] rounded-t-[0px] border border-[#cfc7be] border-t-0 dark:border-slate-700 bg-[#f6f2ee] dark:bg-slate-800">
+          <div className="sheet-panel relative z-10 overflow-hidden rounded-b-xl rounded-t-none border border-[#cfc7be] border-t-0 dark:border-slate-700 bg-[#f6f2ee] dark:bg-slate-800 shadow-[0_14px_30px_rgba(0,0,0,0.12)]">
 
           <div className="flex flex-col bg-[#f7f3ee] dark:bg-slate-800">
             <HeroSection 
@@ -216,6 +218,7 @@ export function WallCalendar() {
           </div>
 
           <div className="h-28 sm:h-32 border-t border-[#d8d0c7] dark:border-slate-700/60 bg-cover bg-center" style={{ backgroundImage: `url(${MONTH_IMAGES[currentDate.getMonth()]})` }} />
+        </div>
         </div>
         </div>
       </div>
