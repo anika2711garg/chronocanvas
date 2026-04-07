@@ -29,7 +29,7 @@ function App() {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_15%,rgba(255,255,255,0.52),transparent_35%),radial-gradient(circle_at_90%_30%,rgba(136,153,172,0.12),transparent_38%)]" />
         </div>
 
-        <div className="relative z-10 w-full max-w-[860px]">
+        <div className="relative z-10 w-full max-w-[1260px]">
           <WallCalendar />
         </div>
       </div>

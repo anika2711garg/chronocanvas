@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { addDays, format, parseISO, startOfDay } from 'date-fns';
+import { addDays, format, isSameDay, parseISO, startOfDay } from 'date-fns';
 import { CalendarSearch, Sparkles, Download, FileText, WandSparkles } from 'lucide-react';
 
 function getSuggestedTitle(text) {
@@ -48,6 +48,21 @@ export function ExperienceDock({
   const [noteText, setNoteText] = useState('');
   const [priority, setPriority] = useState('medium');
   const [emoji, setEmoji] = useState('📝');
+  const [eventVersion, setEventVersion] = useState(0);
+
+  const getNotesContextKey = (targetDate) => {
+    if (startDate && endDate && !isSameDay(startDate, endDate)) {
+      return `notes_${format(startDate, 'yyyy-MM-dd')}_to_${format(endDate, 'yyyy-MM-dd')}`;
+    }
+    if (startDate || targetDate) {
+      const normalized = targetDate || startDate;
+      return `notes_${format(normalized, 'yyyy-MM-dd')}`;
+    }
+    if (currentDate) {
+      return `notes_${format(currentDate, 'yyyy-MM-dd')}`;
+    }
+    return `notes_month_${format(currentDate, 'yyyy-MM')}`;
+  };
 
   const timeline = useMemo(() => {
     const events = [];
@@ -64,7 +79,7 @@ export function ExperienceDock({
     return events
       .sort((a, b) => a.date.localeCompare(b.date))
       .slice(0, 8);
-  }, [currentDate]);
+  }, [currentDate, eventVersion]);
 
   const upcomingWeekCount = useMemo(() => {
     const today = startOfDay(new Date());
@@ -96,7 +111,7 @@ export function ExperienceDock({
 
     localStorage.setItem(`chronocanvas_event_${event.id}`, JSON.stringify(event));
 
-    const notesKey = `notes_list_notes_${dateKey}`;
+    const notesKey = `notes_list_${getNotesContextKey(target)}`;
     let existing = [];
     try {
       const raw = localStorage.getItem(notesKey);
@@ -112,6 +127,13 @@ export function ExperienceDock({
     ].slice(0, 8);
 
     localStorage.setItem(notesKey, JSON.stringify(combined));
+    setEventVersion(prev => prev + 1);
+    window.dispatchEvent(new CustomEvent('chronocanvas-notes-updated', { detail: { key: notesKey } }));
+
+    // Keep calendar and notes panel focused on the same target context.
+    setCurrentDate(target);
+    setStartDate(target);
+    setEndDate(target);
     setNoteText('');
   };
 
@@ -122,6 +144,14 @@ export function ExperienceDock({
     setCurrentDate(target);
     setStartDate(target);
     setEndDate(target);
+  };
+
+  const handleExportImage = async () => {
+    await onExportImage();
+  };
+
+  const handleExportPdf = async () => {
+    await onExportPdf();
   };
 
   return (
@@ -167,6 +197,7 @@ export function ExperienceDock({
       <section className="feature-card">
         <h4><Sparkles className="w-4 h-4" /> Insight Panel</h4>
         <p className="feature-stat">You have {upcomingWeekCount} events this week</p>
+        <p className="feature-stat">Total tracked events: {timeline.length}</p>
         <div className="feature-agenda custom-scrollbar">
           {timeline.length === 0 && <p className="feature-muted">No events yet.</p>}
           {timeline.map(item => (
@@ -184,8 +215,8 @@ export function ExperienceDock({
       <section className="feature-card">
         <h4><Download className="w-4 h-4" /> Export</h4>
         <div className="feature-row feature-grid-2">
-          <button onClick={onExportImage}>PNG</button>
-          <button onClick={onExportPdf}><FileText className="w-3.5 h-3.5" /> PDF</button>
+          <button onClick={handleExportImage}>PNG</button>
+          <button onClick={handleExportPdf}><FileText className="w-3.5 h-3.5" /> PDF</button>
         </div>
       </section>
     </aside>

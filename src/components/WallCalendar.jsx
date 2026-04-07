@@ -1,5 +1,6 @@
 import React, { useState, useRef, useContext } from 'react';
-import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
+import { toPng } from 'html-to-image';
 import { HeroSection } from './HeroSection';
 import { CalendarGrid } from './CalendarGrid';
 import { NotesPanel } from './NotesPanel';
@@ -43,46 +44,64 @@ export function WallCalendar() {
     setEndDate(null);
   };
 
+  const createCalendarPng = async (backgroundColor = '#f4f0ea') => {
+    if (!calendarRef.current) return null;
+
+    return toPng(calendarRef.current, {
+      cacheBust: true,
+      pixelRatio: 2,
+      backgroundColor,
+      skipFonts: true,
+      filter: (node) => {
+        const tag = node?.tagName;
+        return tag !== 'SCRIPT' && tag !== 'STYLE';
+      }
+    });
+  };
+
   const handleExportImage = async () => {
-    if (!calendarRef.current) return;
+    if (!calendarRef.current) return false;
     try {
-      const canvas = await html2canvas(calendarRef.current, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: null
-      });
-      const dataUrl = canvas.toDataURL('image/png');
+      const dataUrl = await createCalendarPng('#f4f0ea');
+      if (!dataUrl) return false;
       const link = document.createElement('a');
       link.download = `ChronoCanvas-${currentDate.getFullYear()}-${currentDate.getMonth() + 1}.png`;
       link.href = dataUrl;
       link.click();
+      return true;
     } catch (err) {
       console.error('Failed to export calendar', err);
+      return false;
     }
   };
 
   const handleExportPdf = async () => {
-    if (!calendarRef.current) return;
+    if (!calendarRef.current) return false;
     try {
-      const canvas = await html2canvas(calendarRef.current, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: '#ffffff'
-      });
-      const dataUrl = canvas.toDataURL('image/png');
-      const popup = window.open('', '_blank');
-      if (!popup) return;
+      const imageData = await createCalendarPng('#ffffff');
+      if (!imageData) return false;
 
-      popup.document.write(`
-        <html><head><title>ChronoCanvas PDF</title></head>
-        <body style="margin:0;display:flex;justify-content:center;align-items:flex-start;background:#fff;">
-          <img src="${dataUrl}" style="max-width:100%;height:auto;" />
-          <script>window.onload = () => { window.print(); };</script>
-        </body></html>
-      `);
-      popup.document.close();
+      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const margin = 8;
+      const usableWidth = pageWidth - margin * 2;
+      const image = new Image();
+      image.src = imageData;
+      await new Promise((resolve, reject) => {
+        image.onload = resolve;
+        image.onerror = reject;
+      });
+
+      const computedHeight = (image.height * usableWidth) / image.width;
+      const usableHeight = Math.min(computedHeight, pageHeight - margin * 2);
+
+      pdf.addImage(imageData, 'PNG', margin, margin, usableWidth, usableHeight, undefined, 'FAST');
+      pdf.save(`ChronoCanvas-${currentDate.getFullYear()}-${currentDate.getMonth() + 1}.pdf`);
+      return true;
     } catch (err) {
       console.error('Failed to prepare PDF print view', err);
+      return false;
     }
   };
 

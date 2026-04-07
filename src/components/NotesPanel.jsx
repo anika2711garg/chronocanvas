@@ -27,7 +27,7 @@ export function NotesPanel({ currentDate, startDate, endDate }) {
 
   const currentKey = `notes_list_${getStorageKey()}`;
 
-  useEffect(() => {
+  const loadNotes = () => {
     const savedRaw = localStorage.getItem(currentKey);
     if (!savedRaw) {
       setNotes([]);
@@ -41,6 +41,21 @@ export function NotesPanel({ currentDate, startDate, endDate }) {
     } catch {
       setNotes([]);
     }
+  };
+
+  useEffect(() => {
+    loadNotes();
+  }, [currentKey]);
+
+  useEffect(() => {
+    const onNotesUpdated = (event) => {
+      if (event?.detail?.key === currentKey) {
+        loadNotes();
+      }
+    };
+
+    window.addEventListener('chronocanvas-notes-updated', onNotesUpdated);
+    return () => window.removeEventListener('chronocanvas-notes-updated', onNotesUpdated);
   }, [currentKey]);
 
   const addNote = () => {
