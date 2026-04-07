@@ -178,7 +178,7 @@ export function WallCalendar() {
             </div>
           </div>
 
-          <div className="h-24 sm:h-28 border-t border-[#d8d0c7] dark:border-slate-700/60 bg-cover bg-center" style={{ backgroundImage: `url(${MONTH_IMAGES[currentDate.getMonth()]})` }} />
+          <div className="h-28 sm:h-32 border-t border-[#d8d0c7] dark:border-slate-700/60 bg-cover bg-center" style={{ backgroundImage: `url(${MONTH_IMAGES[currentDate.getMonth()]})` }} />
         </div>
         </div>
       </div>

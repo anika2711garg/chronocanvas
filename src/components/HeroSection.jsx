@@ -102,7 +102,7 @@ export function HeroSection({ currentDate, onPaletteExtract }) {
 
   return (
     <div
-      className="group relative w-full h-[200px] sm:h-[240px] overflow-hidden bg-[#d8d1c4]"
+      className="group relative w-full h-[218px] sm:h-[258px] overflow-hidden bg-[#d8d1c4]"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
