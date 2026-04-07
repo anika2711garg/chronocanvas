@@ -49,6 +49,7 @@ export function ExperienceDock({
   const [priority, setPriority] = useState('medium');
   const [emoji, setEmoji] = useState('📝');
   const [eventVersion, setEventVersion] = useState(0);
+  const previewTitle = getSuggestedTitle(noteText);
 
   const getNotesContextKey = (targetDate) => {
     if (startDate && endDate && !isSameDay(startDate, endDate)) {
@@ -156,27 +157,43 @@ export function ExperienceDock({
 
   return (
     <aside className="feature-dock">
-      <section className="feature-card">
-        <h4><CalendarSearch className="w-4 h-4" /> Smart Actions</h4>
-        <label>Go to specific date</label>
-        <div className="feature-row">
-          <input type="date" value={goToDate} onChange={(e) => setGoToDate(e.target.value)} />
-          <button onClick={jumpToDate}>Go</button>
-        </div>
+      <div className="feature-group feature-group-actions">
+        <section className="feature-cluster feature-cluster-actions">
+          <h4><CalendarSearch className="w-4 h-4" /> Smart Actions</h4>
+          <label>Go to specific date</label>
+          <div className="action-inline-row">
+            <input type="date" value={goToDate} onChange={(e) => setGoToDate(e.target.value)} />
+            <button onClick={jumpToDate} className="action-inline-go">Go</button>
+          </div>
 
-        <div className="feature-row feature-grid-2">
-          <button onClick={onJumpToToday}>Today</button>
-          <button onClick={onClearSelection}>Clear</button>
-        </div>
+          <div className="action-pill-row">
+            <button onClick={onJumpToToday} className="action-pill">Today</button>
+            <button onClick={onClearSelection} className="action-pill">Clear</button>
+          </div>
 
-        <div className="feature-toggles">
-          <label><input type="checkbox" checked={disablePastDates} onChange={(e) => setDisablePastDates(e.target.checked)} /> Disable past dates</label>
-          <label><input type="checkbox" checked={disableFutureDates} onChange={(e) => setDisableFutureDates(e.target.checked)} /> Disable future dates</label>
-          <label><input type="checkbox" checked={compactMode} onChange={(e) => setCompactMode(e.target.checked)} /> Compact density</label>
-        </div>
-      </section>
+          <div className="feature-toggles">
+            <label><input type="checkbox" checked={disablePastDates} onChange={(e) => setDisablePastDates(e.target.checked)} /> Disable past dates</label>
+            <label><input type="checkbox" checked={disableFutureDates} onChange={(e) => setDisableFutureDates(e.target.checked)} /> Disable future dates</label>
+            <label><input type="checkbox" checked={compactMode} onChange={(e) => setCompactMode(e.target.checked)} /> Compact density</label>
+          </div>
+        </section>
 
-      <section className="feature-card">
+        <section className="feature-cluster feature-cluster-export">
+          <h4><Download className="w-4 h-4" /> Export</h4>
+          <div className="export-row">
+            <button onClick={handleExportImage} className="export-action" aria-label="Export PNG">
+              <Download className="w-4 h-4" />
+              <span>PNG</span>
+            </button>
+            <button onClick={handleExportPdf} className="export-action" aria-label="Export PDF">
+              <FileText className="w-4 h-4" />
+              <span>PDF</span>
+            </button>
+          </div>
+        </section>
+      </div>
+
+      <section className="feature-cluster feature-cluster-notes">
         <h4><WandSparkles className="w-4 h-4" /> Smart Notes</h4>
         <textarea
           placeholder="Type note with emoji support, e.g. 🎁 Buy gift for mom"
@@ -191,12 +208,26 @@ export function ExperienceDock({
           </select>
           <input value={emoji} onChange={(e) => setEmoji(e.target.value)} maxLength={2} />
         </div>
+
+        <div className="note-preview-stack" aria-hidden="true">
+          <div className="note-preview note-preview-main">
+            <small>{previewTitle || 'Quick Note'}</small>
+            <p>{noteText.trim() || 'Your note preview appears here'}</p>
+          </div>
+          <div className="note-preview note-preview-sub">
+            <small>{priority} priority</small>
+          </div>
+        </div>
+
         <button onClick={addSmartNote} className="feature-primary-btn">Add Smart Note</button>
       </section>
 
-      <section className="feature-card">
+      <section className="insight-strip">
         <h4><Sparkles className="w-4 h-4" /> Insight Panel</h4>
-        <p className="feature-stat">You have {upcomingWeekCount} events this week</p>
+        <div className="insight-main">
+          <span className="insight-number">{upcomingWeekCount}</span>
+          <span className="insight-label">events this week</span>
+        </div>
         <p className="feature-stat">Total tracked events: {timeline.length}</p>
         <div className="feature-agenda custom-scrollbar">
           {timeline.length === 0 && <p className="feature-muted">No events yet.</p>}
@@ -209,14 +240,6 @@ export function ExperienceDock({
               </div>
             </div>
           ))}
-        </div>
-      </section>
-
-      <section className="feature-card">
-        <h4><Download className="w-4 h-4" /> Export</h4>
-        <div className="feature-row feature-grid-2">
-          <button onClick={handleExportImage}>PNG</button>
-          <button onClick={handleExportPdf}><FileText className="w-3.5 h-3.5" /> PDF</button>
         </div>
       </section>
     </aside>
