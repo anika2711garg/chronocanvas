@@ -362,6 +362,7 @@ export function CalendarGrid({
           {days.map((day) => {
             const isSelectedStart = startDate && isSameDay(day, startDate);
             const isSelectedEnd = endDate && isSameDay(day, endDate);
+            const isToday = isSameDay(day, new Date());
             const highlighted = isInRange(day);
             const middleRange = isRangeMiddle(day);
             const shadowHovered = isHoverRange(day);
@@ -398,6 +399,7 @@ export function CalendarGrid({
                   !isCurrentMonth && 'text-[#bcc0c7] dark:text-slate-600',
                   blocked && 'opacity-35 cursor-not-allowed',
                   isCurrentMonth && 'text-[#474d57] dark:text-slate-200 hover:bg-[#edf0f3] dark:hover:bg-slate-700/35',
+                  isCurrentMonth && isToday && 'sheet-day-today',
                   noteDensity === 1 && 'note-heat-1',
                   noteDensity === 2 && 'note-heat-2',
                   noteDensity >= 3 && 'note-heat-3',
